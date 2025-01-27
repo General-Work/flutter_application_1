@@ -18,7 +18,7 @@ jobs:
         uses: actions/step-java@v4
         with: 
           distribution: 'temurin'
-          java-version: 17
+          java-version: "17"
           cache: 'gradle'
 
       - name: Version Bump
