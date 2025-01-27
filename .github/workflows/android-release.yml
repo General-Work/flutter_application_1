@@ -42,8 +42,6 @@ jobs:
       - run: flutter pub get
       - run: flutter --version
       
-      - run: flutter build apk --release 
-
       - name: Build APK
         run: flutter build apk --release
 
