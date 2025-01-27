@@ -21,14 +21,14 @@ jobs:
           java-version: "17"
           cache: "gradle"
 
-      - name: Version Bump
-        uses: chkfung/android-version-actions@v1.2.3
-        with:
-          gradlePath: app/build.gradle
-          versionCode: ${{ github.run_number }}
+      # - name: Version Bump
+      #   uses: chkfung/android-version-actions@v1.2.3
+      #   with:
+      #     gradlePath: app/build.gradle
+      #     versionCode: ${{ github.run_number }}
 
-      - name: Assmble Release Bundle
-        run: ./gradlew bundleRelease
+      # - name: Assmble Release Bundle
+      #   run: ./gradlew bundleRelease
 
       - name: Install Flutter
         uses: subosito/flutter-action@v2
