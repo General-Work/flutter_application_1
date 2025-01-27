@@ -1,34 +1,38 @@
-name: Android Release
+name: Build Release APK
 
 on:
-  pull_request:
-    branches: [main]
-
   push:
-    branches: [main]
+    branches:
+      - main
 
 jobs:
-  buid:
-    name: Build
+  build:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-      - name: Step up JDK 17
-        uses: actions/setup-java@v4
+      - name: Setup JDK
+        uses: actions/setup-java@v3
         with:
-          distribution: "temurin"
-          java-version: "17"
-          cache: "gradle"
+          distribution: 'zulu'
+          java-version: '17' # Use your project's Java version
 
-      # - name: Version Bump
-      #   uses: chkfung/android-version-actions@v1.2.3
-      #   with:
-      #     gradlePath: app/build.gradle
-      #     versionCode: ${{ github.run_number }}
+      - name: Decode and save keystore file
+        env:
+          KEYSTORE_BASE64: ${{ secrets.APP_KEYSTORE }}
+        run: |
+          echo "$KEYSTORE_BASE64" | base64 -d > android/app/release-key.keystore
+          echo "Keystore file created."
 
-      # - name: Assmble Release Bundle
-      #   run: ./gradlew bundleRelease
+      - name: Set environment variables
+        run: |
+          echo "KEYSTORE_PATH=android/app/release-key.keystore" >> $GITHUB_ENV
+          echo "KEYSTORE_PASSWORD=${{ secrets.KEYSTORE_PASSWORD }}" >> $GITHUB_ENV
+          echo "KEY_ALIAS=${{ secrets.KEY_ALIAS }}" >> $GITHUB_ENV
+          echo "KEY_PASSWORD=${{ secrets.KEY_PASSWORD }}" >> $GITHUB_ENV
+
 
       - name: Install Flutter
         uses: subosito/flutter-action@v2
@@ -38,23 +42,13 @@ jobs:
       - run: flutter pub get
       - run: flutter --version
       
-      # - run: flutter build apk --release --split-per-abi
       - run: flutter build apk --release 
 
-      - name: Sign Release
-        uses: r0adkll/sign-android-release@v1
-        with:
-          storeFile: ${{secrets.APP_KEYSTORE}}
-          releaseDirectory: build/app/outputs/bundle/release
-          signingKeyBase64: ${{ secrets.APP_KEYSTORE }}
-          keyStorePassword: ${{secrets.APP_PASSWORD}}
-          alias: ${{secrets.APP_ALIAS}}
-          keyPassword: ${{secrets.APP_ALIAS_PASSWORD}}
+      - name: Build APK
+        run: flutter build apk --release
 
-
-      - name: Push to release
-        uses: ncipollo/release-action@v1
+      - name: Upload APK
+        uses: actions/upload-artifact@v3
         with:
-          artifacts: "build/app/outputs/apk/release/*.apk"
-          tag: "v0.0${{ github.run_number }}"
-          token: ${{secrets.APP_KEYSTORE}}
+          name: release-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
