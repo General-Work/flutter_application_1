@@ -39,6 +39,15 @@ jobs:
       - run: flutter --version
       - run: flutter build apk --release --split-per-abi
 
+      - name: Sign Release
+        uses: r0adkll/sign-android-release@v1
+        with:
+          releaseDirectory: build/app/outputs/apk/release/*.apk
+          signingKeyBase64: ${{ secrets.APP_KEYSTORE }}
+          keyStorePassword: ${{secrets.APP_PASSWORD}}
+          alias: ${{secrets.APP_ALIAS}}
+          keyPassword: ${{secrets.APP_ALIAS_PASSWORD}}
+
       - name: Push to release
         uses: ncipollo/release-action@v1
         with:
