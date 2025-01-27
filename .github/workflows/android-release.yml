@@ -1,0 +1,49 @@
+name: Android Release
+
+on:
+  pull_request: 
+    branches: [main]
+
+  push:
+    branches: [main]
+
+jobs:
+  buid:
+    name: Build
+    runs-on: ubuntu-latest
+    steps: 
+      - uses: actions/checkout@v4
+
+      - name: Step up JDK 17
+        uses: actions/step-java@v4
+        with: 
+          distribution: 'temurin'
+          java-version: 17
+          cache: 'gradle'
+
+      - name: Version Bump
+        uses: chkfung/android-version-actions@v1.2.3
+        with: 
+          gradlePath: app/build.gradle
+          versionCode: ${{ github.run_number }}
+
+      - name: Assmble Release Bundle
+        run: ./gradlew bundleRelease
+      
+      - name: Install Flutter
+        uses: subsito/flutter-action@v2
+        with: 
+          flutter-version: '3.0.0'
+      
+      - run: flutter pub get
+      - run: flutter --version
+      - run: flutter build apk --release
+      
+      - name: Push to release
+        uses: ncipollo/release-action@v1
+        with: 
+          artifacts: "build/app/outputs/apk/release/*.apk"
+          tag: "v0.0${{ github.run_number }}"
+
+        
+
