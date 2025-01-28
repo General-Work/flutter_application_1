@@ -35,16 +35,16 @@ android {
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
-    // signingConfigs {
-    //     // release {
+    signingConfigs {
+        release {
         
-    //     //     keyAlias = System.getenv("APP_ALIAS")
-    //     //     keyPassword = System.getenv("APP_ALIAS_PASSWORD")
-    //     //     storeFile = file(System.getenv("APP_KEYSTORE"))
-    //     //     storePassword = System.getenv("APP_PASSWORD")
+            keyAlias = System.getenv("APP_ALIAS")
+            keyPassword = System.getenv("APP_ALIAS_PASSWORD")
+            storeFile = file("app.keystore")
+            storePassword = System.getenv("APP_PASSWORD")
         
-    //     // }
-    // }
+        }
+    }
     buildTypes {
         release {
             // TODO: Add your own signing config for the release build.
