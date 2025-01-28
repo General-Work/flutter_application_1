@@ -52,7 +52,7 @@ jobs:
           keyStorePassword: ${{secrets.APP_PASSWORD}}
           alias: ${{secrets.APP_ALIAS}}
           keyPassword: ${{secrets.APP_ALIAS_PASSWORD}}
-          storeFile: ${{ secrets.APP_KEYSTORE }}
+          storeFile: /tmp/keystore.jks
 
 
       - name: Push to release
