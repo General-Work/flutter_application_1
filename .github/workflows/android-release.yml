@@ -35,8 +35,8 @@ jobs:
         with:
           flutter-version: "3.24.3"
 
-      - name: Decode Keystore
-        run: echo ${{ secrets.APP_KEYSTORE }} | base64 --decode > /tmp/keystore.jks
+      # - name: Decode Keystore
+      #   run: echo ${{ secrets.APP_KEYSTORE }} | base64 --decode > /tmp/keystore.jks
 
       - run: flutter pub get
       - run: flutter --version
@@ -44,15 +44,15 @@ jobs:
       # - run: flutter build apk --release --split-per-abi
       - run: flutter build apk --release 
 
-      - name: Sign Release
-        uses: r0adkll/sign-android-release@v1
-        with:
-          releaseDirectory: build/app/outputs/bundle/release
-          signingKeyBase64: ${{ secrets.APP_KEYSTORE }}
-          keyStorePassword: ${{secrets.APP_PASSWORD}}
-          alias: ${{secrets.APP_ALIAS}}
-          keyPassword: ${{secrets.APP_ALIAS_PASSWORD}}
-          storeFile: /tmp/keystore.jks
+      # - name: Sign Release
+      #   uses: r0adkll/sign-android-release@v1
+      #   with:
+      #     releaseDirectory: build/app/outputs/bundle/release
+      #     signingKeyBase64: ${{ secrets.APP_KEYSTORE }}
+      #     keyStorePassword: ${{secrets.APP_PASSWORD}}
+      #     alias: ${{secrets.APP_ALIAS}}
+      #     keyPassword: ${{secrets.APP_ALIAS_PASSWORD}}
+      #     # storeFile: /tmp/keystore.jks
 
 
       - name: Push to release
