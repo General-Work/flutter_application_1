@@ -43,6 +43,8 @@ jobs:
 
       # - run: flutter build apk --release --split-per-abi
       - run: flutter build apk --release
+      - run: flutter build appbundle
+
       # - run: |
       #     flutter build ios --no-codesign
       #     cd build/ios/iphoneos
@@ -60,8 +62,8 @@ jobs:
       - name: Sign Release
         uses: r0adkll/sign-android-release@v1
         with:
-          # releaseDirectory: build/app/outputs/bundle/release
-          releaseDirectory: build/app/outputs/flutter-apk 
+          releaseDirectory: build/app/outputs/bundle/release
+          # releaseDirectory: build/app/outputs/flutter-apk 
           signingKeyBase64: ${{ secrets.APP_KEYSTORE }}
           keyStorePassword: ${{secrets.APP_PASSWORD}}
           alias: ${{secrets.APP_ALIAS}}
