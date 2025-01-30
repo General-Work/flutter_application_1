@@ -23,7 +23,7 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>12</string>
+	<string>1</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
@@ -45,5 +45,13 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app requires access to your photo library to allow image uploads.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>This app requires access to your camera to take pictures.</string>
+
+	<key>NSMicrophoneUsageDescription</key>
+	<string>This app requires access to your microphone for audio recording.</string>
+
 </dict>
 </plist>
