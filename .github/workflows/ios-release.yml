@@ -8,72 +8,33 @@ on:
     branches: [main]
 
 jobs:
-  buid:
-    name: Build
+  deoployIos:
     runs-on: macos-latest
+    env:
+      ASC_JSON_KEY: ${{secrets.ASC_JSON_KEY}}
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Step up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          distribution: "temurin"
-          java-version: "17"
-          cache: "gradle"
-
-      # - name: Version Bump
-      #   uses: chkfung/android-version-actions@v1.2.3
-      #   with:
-      #     gradlePath: app/build.gradle
-      #     versionCode: ${{ github.run_number }}
-
-      # - name: Assmble Release Bundle
-      #   run: ./gradlew bundleRelease
-
-      - name: Install Flutter
+      - name: Checkout repo
+        uses: actions/checkout@v3
+      - name: Step Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.24.3"
-
-      # - name: Decode Keystore
-      #   run: echo ${{ secrets.APP_KEYSTORE }} | base64 --decode > /tmp/keystore.jks
-
-      - run: flutter pub get
-      - run: flutter --version
-
-      # - run: flutter build apk --release --split-per-abi
-      # - run: flutter build apk --release
-      # - run: flutter build appbundle
-
-      - run: |
-          flutter build ios --no-codesign
-          cd build/ios/iphoneos
-          mkdir Payload
-          cd Payload
-          ln -s ../Runner.app
-          cd ..
-          zip -r app.ipa Payload
-
-      # - name: Decode Keystore
-      #   run: |
-      #     echo "${{ secrets.APP_KEYSTORE }}" | base64 --decode > app.keystore
-      #     echo "Keystore written to $(pwd)/app.keystore"
-
-      # - name: Sign Release
-      #   uses: r0adkll/sign-android-release@v1
-      #   with:
-      #     releaseDirectory: build/app/outputs/bundle/release
-      #     # releaseDirectory: build/app/outputs/flutter-apk 
-      #     signingKeyBase64: ${{ secrets.APP_KEYSTORE }}
-      #     keyStorePassword: ${{secrets.APP_PASSWORD}}
-      #     alias: ${{secrets.APP_ALIAS}}
-      #     keyPassword: ${{secrets.APP_ALIAS_PASSWORD}}
-
-      - name: Push to release
-        uses: ncipollo/release-action@v1
+          flutter-version: "3.19.2"
+          channel: "stable"
+          cache: true
+        id: flutter
+      - name: Setup Fastlane
+        uses: ruby/setup-ruby@v1
         with:
-          # artifacts: "build/app/outputs/flutter-apk/app-release.apk"
-          artifacts: "build/ios/iphoneos/app.ipa"
+          ruby-version: "3.3"
+          bundler-cache: true
+          working-directory: ios
+      - name: Setup app store connect
+        run: echo "$ASC_STORE_JSON" >> ./fastlane/store.json
+      - name: Build and Deploy to testflight
+        env:
+          MATCH_PASSWORD: ${{secrets.MATCH_PASSWORD}}
+          MATCH_GIT_BASIC_AUTHORIZATION: ${{secrets.MATCH_GIT_BASIC_AUTHORIZATION}}
 
-          tag: "v0.0${{ github.run_number }}"
-          token: ${{secrets.TOKEN}}
+        run: |
+          cd ./ios
+          bundle exec fastlane ios beta
